@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GST Invoice Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5ef;
+      padding: 15px;
+      color: #24313d;
+    }
+    h1 { color: #17324d; text-align: center; }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      margin: 20px auto;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border-radius: 7px;
+    }
+    input, select { border: 1px solid #aaa; }
+    button {
+      background: #167c80;
+      color: white;
+      border: 0;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .result {
+      background: #edf5f3;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>GST Invoice Calculator</h1>
+
+  <div class="box">
+    <h3>Enter Invoice Details</h3>
+
+    <input id="item" placeholder="Product Name">
+    <input id="qty" type="number" placeholder="Quantity" value="1" min="0.01" step="any">
+    <input id="price" type="number" placeholder="Price per Unit" value="1000" min="0" step="any">
+
+    <select id="rate">
+      <option value="5">GST 5%</option>
+      <option value="12">GST 12%</option>
+      <option value="18" selected>GST 18%</option>
+      <option value="28">GST 28%</option>
+    </select>
+
+    <select id="type">
+      <option value="intra">Within Same State</option>
+      <option value="inter">Between States</option>
+    </select>
+
+    <button onclick="calculate()">Calculate GST</button>
+
+    <div class="result">
+      <p>Taxable Amount: <b id="base">₹0.00</b></p>
+      <p>CGST: <b id="cgst">₹0.00</b></p>
+      <p>SGST: <b id="sgst">₹0.00</b></p>
+      <p>IGST: <b id="igst">₹0.00</b></p>
+      <p>Total GST: <b id="gst">₹0.00</b></p>
+      <h3>Final Amount: <b id="total">₹0.00</b></h3>
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      const q = Number(document.getElementById("qty").value);
+      const p = Number(document.getElementById("price").value);
+      const r = Number(document.getElementById("rate").value);
+      const type = document.getElementById("type").value;
+
+      if (q <= 0 || p < 0 || !Number.isFinite(q) || !Number.isFinite(p)) {
+        alert("Enter valid quantity and price");
+        return;
+      }
+
+      const base = q * p;
+      const gst = base * r / 100;
+      const cgst = type === "intra" ? gst / 2 : 0;
+      const sgst = type === "intra" ? gst / 2 : 0;
+      const igst = type === "inter" ? gst : 0;
+
+      const money = n => "₹" + n.toFixed(2);
+
+      document.getElementById("base").innerText = money(base);
+      document.getElementById("cgst").innerText = money(cgst);
+      document.getElementById("sgst").innerText = money(sgst);
+      document.getElementById("igst").innerText = money(igst);
+      document.getElementById("gst").innerText = money(gst);
+      document.getElementById("total").innerText = money(base + gst);
+    }
+  </script>
+
+</body>
+</html>
